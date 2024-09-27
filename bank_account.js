@@ -1,36 +1,44 @@
 class BankAccount {
-    constructor() {
-        this.saldo = 0;
+    constructor(owner, balance = 0) {
+        this.owner = owner;
+        this.balance = balance;
     }
 
-    tambahSaldo() {
-        let jumlahTambah = parseFloat(window.prompt("Masukkan jumlah saldo yang ingin ditambahkan:"));
-
-        this.saldo += jumlahTambah;
-
-        alert("Saldo baru Anda adalah: " + this.saldo);
-        
-        let lagi = window.prompt("Apakah Anda ingin menambah saldo lagi? (ya/tidak)");
-        if (lagi.toLowerCase() === "ya") {
-            this.tambahSaldo();
-        }
+    async deposit(amount) {
+        return new Promise((resolve, reject) => {
+            if (amount <= 0) {
+                reject(new Error("Jumlah yang disetor harus lebih dari 0"));
+            } else {
+                console.log(`Menyetor ${amount} ke akun ${this.owner}...`);
+                setTimeout(() => {
+                    this.balance += amount;
+                    console.log(`Setoran berhasil! Saldo baru: ${this.balance}`);
+                    resolve(this.balance);
+                }, 2000);
+            }
+        });
     }
 
-    kurangiSaldo() {
-        let jumlahKurang = parseFloat(window.prompt("Masukkan jumlah saldo yang ingin dikurangi:"));
-        
-        this.saldo -= jumlahKurang;
+    async withdraw(amount) {
+        return new Promise((resolve, reject) => {
+            console.log(`Menarik ${amount} dari akun ${this.owner}...`);
+            setTimeout(() => {
+                if (amount > this.balance) {
+                    reject(new Error('Saldo tidak mencukupi!'));
+                } else if (amount <= 0) {
+                    reject(new Error('Jumlah penarikan harus lebih dari 0'));
+                } else {
+                    this.balance -= amount;
+                    console.log(`Penarikan berhasil! Saldo baru: ${this.balance}`);
+                    resolve(this.balance);
+                }
+            }, 2000);
+        });
+    }
 
-        alert("Saldo baru Anda adalah: " + this.saldo);
-        
-        let lagi = window.prompt("Apakah Anda ingin mengurangi saldo lagi? (ya/tidak)");
-        if (lagi.toLowerCase() === "ya") {
-            this.kurangiSaldo();
-        }
+    checkBalance() {
+        return `Saldo akun untuk ${this.owner}: ${this.balance}`;
     }
 }
 
-const akunSaya = new BankAccount();
-
-akunSaya.tambahSaldo();
-akunSaya.kurangiSaldo();
+module.exports = BankAccount;
