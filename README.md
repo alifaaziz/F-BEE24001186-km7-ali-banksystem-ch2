@@ -1,4 +1,6 @@
-# Basic Banking System [STUDI INDEPENDEN BINAR ACADEMY-BACKEND JAVASCRIPT] 
+# Basic Banking System 
+## Challenge Chapter 2
+## [STUDI INDEPENDEN BINAR ACADEMY-BACKEND JAVASCRIPT]
 
 ## Deskripsi
 Basic Banking System adalah aplikasi sederhana yang menggunakan konsep Pemrograman Berorientasi Objek (OOP) untuk melakukan operasi transaksi perbankan seperti deposit dan penarikan. Sistem ini mensimulasikan operasi transaksi yang asynchronous dan dilengkapi dengan fitur login menggunakan username dan password.
@@ -16,7 +18,7 @@ Basic Banking System adalah aplikasi sederhana yang menggunakan konsep Pemrogram
 ## Penggunaan
 1. **Jalankan aplikasi:**
   ```bash
-   node banking_system.js
+   node bank_system.js
   ```
 2. **Ikuti instruksi di layar:**
    - Masukkan username dan password untuk login.
