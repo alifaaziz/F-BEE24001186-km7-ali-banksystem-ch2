@@ -6,6 +6,9 @@ const prompt = require('prompt-sync')();
 
     console.log(myAccount.checkBalance());
 
+    let continueTransaction = true;
+
+    while (continueTransaction){
     try {
         // Tanya pengguna mau deposit atau withdraw
         const action = prompt("Apakah Anda ingin melakukan deposit atau withdraw? (d/w): ");
@@ -34,5 +37,11 @@ const prompt = require('prompt-sync')();
         console.log(myAccount.checkBalance());
     } catch (error) {
         console.error(`Error: ${error.message}`);
+    }
+    const anotherTransaction = prompt("Apakah Anda ingin melakukan transaksi lain? (y/n): ");
+        if (anotherTransaction.toLowerCase() !== 'y') {
+            continueTransaction = false;
+            console.log("Terima kasih telah menggunakan layanan kami.");
+        }
     }
 })();
