@@ -40,7 +40,9 @@ class BankAccount {
         return new Promise((resolve, reject) => {
             console.log(`Menarik ${amount} dari akun ${this.owner}...`);
             setTimeout(() => {
-                if (amount > this.balance) {
+                if (this.balance - amount < 50) {
+                    reject(new Error('Saldo tidak mencukupi! Saldo minimal adalah 50.'));
+                } else if (amount > this.balance) {
                     reject(new Error('Saldo tidak mencukupi!'));
                 } else if (amount <= 0) {
                     reject(new Error('Jumlah penarikan harus lebih dari 0'));
