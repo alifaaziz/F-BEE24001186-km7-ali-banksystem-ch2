@@ -1,7 +1,24 @@
 class BankAccount {
-    constructor(owner, balance = 0) {
+    #password;
+
+    constructor(owner, username, password, balance = 0) {
         this.owner = owner;
+        this.username = username;
+        this.#password = this.#encrypt(password);
         this.balance = balance;
+    }
+
+    #encrypt(password) {
+        return `encrypted-${password}`;
+    }
+
+    #decrypt(encryptedPassword) {
+        return encryptedPassword.split('encrypted-')[1];
+    }
+
+    verifyLogin(inputUsername, inputPassword) {
+        const decryptedPassword = this.#decrypt(this.#password);
+        return this.username === inputUsername && decryptedPassword === inputPassword;
     }
 
     async deposit(amount) {
