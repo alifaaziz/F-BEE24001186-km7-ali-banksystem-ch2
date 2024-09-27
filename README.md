@@ -18,7 +18,7 @@ Basic Banking System adalah aplikasi sederhana yang menggunakan konsep Pemrogram
   ```bash
    node banking_system.js
   ```
-3. **Ikuti instruksi di layar:**
+2. **Ikuti instruksi di layar:**
    - Masukkan username dan password untuk login.
    - Pilih apakah ingin melakukan deposit atau penarikan.
    - Masukkan jumlah uang yang ingin disetor atau ditarik.
