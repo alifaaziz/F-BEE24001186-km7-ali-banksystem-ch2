@@ -1,5 +1,5 @@
 # Basic Banking System Challenge Chapter 2
-# [STUDI INDEPENDEN BINAR ACADEMY-BACKEND JAVASCRIPT]
+[STUDI INDEPENDEN BINAR ACADEMY-BACKEND JAVASCRIPT]
 
 ## Deskripsi
 Basic Banking System adalah aplikasi sederhana yang menggunakan konsep Pemrograman Berorientasi Objek (OOP) untuk melakukan operasi transaksi perbankan seperti deposit dan penarikan. Sistem ini mensimulasikan operasi transaksi yang asynchronous dan dilengkapi dengan fitur login menggunakan username dan password.
