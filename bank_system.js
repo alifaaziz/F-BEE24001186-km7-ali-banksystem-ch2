@@ -1,12 +1,12 @@
-const { BankAccount, SavingsAccount } = require('./bank_account');
+const { BankAccount, InvestAccount } = require('./bank_account');
 const prompt = require('prompt-sync')();
 
 (async function simulateBankingSystem() {
-    const accountType = prompt("Pilih jenis akun (regular/savings): ");
+    const accountType = prompt("Pilih jenis akun (regular/invest): ");
 
     let myAccount;
-    if (accountType === 'savings') {
-        myAccount = new SavingsAccount('Binar', 'binar123', 'password123', 500);
+    if (accountType === 'invest') {
+        myAccount = new InvestAccount('Binar', 'binar123', 'password123', 500);
     } else {
         myAccount = new BankAccount('Binar', 'binar123', 'password123', 500);
     }
