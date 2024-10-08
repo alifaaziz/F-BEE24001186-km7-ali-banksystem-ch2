@@ -60,4 +60,29 @@ class BankAccount {
     }
 }
 
-module.exports = BankAccount;
+class SavingsAccount extends BankAccount {
+    constructor(owner, username, password, balance = 0, interestRate = 0.02) {
+        super(owner, username, password, balance);
+        this.interestRate = interestRate; // Tingkat bunga untuk tabungan
+    }
+
+    // Override method deposit untuk menambahkan bunga setelah deposit
+    async deposit(amount) {
+        const newBalance = await super.deposit(amount);
+        this.applyInterest();
+        return newBalance;
+    }
+
+    applyInterest() {
+        const interest = this.balance * this.interestRate;
+        this.balance += interest;
+        console.log(`Bunga diterapkan: ${interest}. Saldo baru: ${this.balance}`);
+    }
+
+    // Polymorphism: Mengubah cara checkBalance ditampilkan untuk SavingsAccount
+    checkBalance() {
+        return `Saldo akun tabungan untuk ${this.owner}: ${this.balance} (termasuk bunga ${this.interestRate * 100}%)`;
+    }
+}
+
+module.exports = { BankAccount, SavingsAccount };
