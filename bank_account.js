@@ -60,10 +60,10 @@ class BankAccount {
     }
 }
 
-class SavingsAccount extends BankAccount {
+class InvestAccount extends BankAccount {
     constructor(owner, username, password, balance = 0, interestRate = 0.02) {
         super(owner, username, password, balance);
-        this.interestRate = interestRate; // Tingkat bunga untuk tabungan
+        this.interestRate = interestRate; // Tingkat bunga untuk investasi
     }
 
     // Override method deposit untuk menambahkan bunga setelah deposit
@@ -73,16 +73,17 @@ class SavingsAccount extends BankAccount {
         return newBalance;
     }
 
+    // Menambahkan metode untuk menerapkan bunga bulanan
     applyInterest() {
         const interest = this.balance * this.interestRate;
         this.balance += interest;
         console.log(`Bunga diterapkan: ${interest}. Saldo baru: ${this.balance}`);
     }
 
-    // Polymorphism: Mengubah cara checkBalance ditampilkan untuk SavingsAccount
+    // Polymorphism: Mengubah cara checkBalance ditampilkan untuk InvestAccount
     checkBalance() {
-        return `Saldo akun tabungan untuk ${this.owner}: ${this.balance} (termasuk bunga ${this.interestRate * 100}%)`;
+        return `Saldo akun investasi untuk ${this.owner}: ${this.balance} (termasuk bunga ${this.interestRate * 100}%)`;
     }
 }
 
-module.exports = { BankAccount, SavingsAccount };
+module.exports = { BankAccount, InvestAccount };
