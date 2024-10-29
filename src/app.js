@@ -2,9 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const { PrismaClient } = require('@prisma/client');
-const swaggerUi = require("swagger-ui-express");
-const swaggerFile = require('../swagger-output.json');
+const swaggerUi = require('swagger-ui-express');
 const expressSwagger = require('express-swagger-generator');
+
+// Routes
 const userRoutes = require('./routes/user');
 const accountRoutes = require('./routes/accounts');
 const transactionRoutes = require('./routes/transactions');
@@ -14,7 +15,7 @@ const app = express();
 const prisma = new PrismaClient();
 
 // Swagger Setup
-let options = {
+const swaggerOptions = {
     swaggerDefinition: {
         info: {
             description: 'API documentation for the Basic Banking System',
@@ -30,15 +31,16 @@ let options = {
                 type: 'apiKey',
                 in: 'header',
                 name: 'Authorization',
-                description: "",
+                description: '',
             },
         },
     },
-    basedir: __dirname,
-    files: ['./routes/*.js'],
+    basedir: __dirname, // Menentukan direktori basis untuk mencari file
+    files: ['./routes/*.js'], // Mencari semua file route di dalam folder routes
 };
-expressSwagger(app)(options);
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+// Swagger generator
+expressSwagger(app)(swaggerOptions);
 
 // Middleware
 app.use(express.json());
@@ -49,12 +51,14 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => {
     res.send('Welcome to the Basic Banking System API');
 });
+
+// Menggunakan route yang telah dibuat
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/accounts', accountRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/auth', authRoutes);
 
-// Error handling
+// Error Handling Middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     if (err.isJoi) {

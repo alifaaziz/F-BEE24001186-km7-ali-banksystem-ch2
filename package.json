@@ -6,8 +6,13 @@
   "scripts": {
     "test": "jest",
     "start": "node index.js",
-    "dev": "nodemon ./index.js",
-    "swagger": "node ./swagger.js"
+    "dev": "nodemon ./index.js"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/controllers/*.{js,jsx}"
+    ]
   },
   "author": "",
   "license": "MIT",

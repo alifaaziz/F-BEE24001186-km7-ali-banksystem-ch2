@@ -17,8 +17,8 @@ const createAccount = async (req, res, next) => {
         });
 
         res.status(201).json(account);
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        next(error);
     }
 };
 
@@ -27,8 +27,8 @@ const getAllAccounts = async (req, res, next) => {
     try {
         const accounts = await prisma.bankAccount.findMany();
         res.json(accounts);
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        next(error);
     }
 };
 
@@ -42,22 +42,21 @@ const getAccountById = async (req, res, next) => {
             return res.status(404).json({ message: 'Account not found' });
         }
         res.json(account);
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        next(error);
     }
 };
 
-// Deposit
+// Deposit function
 const deposit = async (req, res, next) => {
+    const { accountId, amount } = req.body;
+
+    // Validasi jumlah
+    if (!accountId || !amount || amount <= 0) {
+        return res.status(400).json({ message: 'Invalid account ID or amount' });
+    }
+
     try {
-        const { accountId, amount } = req.body;
-
-        // Validasi input
-        if (!accountId || !amount || amount <= 0) {
-            return res.status(400).json({ message: 'Invalid account ID or amount' });
-        }
-
-        // Temukan akun
         const account = await prisma.bankAccount.findUnique({
             where: { id: accountId },
         });
@@ -66,25 +65,27 @@ const deposit = async (req, res, next) => {
             return res.status(404).json({ message: 'Account not found' });
         }
 
-        // Update saldo
         const updatedAccount = await prisma.bankAccount.update({
             where: { id: accountId },
-            data: {
-                balance: account.balance + amount, // Tambahkan jumlah ke saldo
-            },
+            data: { balance: account.balance + amount },
         });
 
-        res.json(updatedAccount);
-    } catch (err) {
-        next(err);
+        res.status(200).json(updatedAccount);
+    } catch (error) {
+        next(error);
     }
 };
 
-// Withdraw
+// Withdraw function
 const withdraw = async (req, res, next) => {
-    try {
-        const { accountId, amount } = req.body;
+    const { accountId, amount } = req.body;
 
+    // Validasi jumlah
+    if (!accountId || !amount || amount <= 0) {
+        return res.status(400).json({ message: 'Invalid account ID or amount' });
+    }
+
+    try {
         const account = await prisma.bankAccount.findUnique({
             where: { id: accountId },
         });
@@ -97,17 +98,14 @@ const withdraw = async (req, res, next) => {
             return res.status(400).json({ message: 'Insufficient balance' });
         }
 
-        // Update saldo
         const updatedAccount = await prisma.bankAccount.update({
             where: { id: accountId },
-            data: {
-                balance: account.balance - amount,
-            },
+            data: { balance: account.balance - amount },
         });
 
-        res.json(updatedAccount);
-    } catch (err) {
-        next(err);
+        res.status(200).json(updatedAccount);
+    } catch (error) {
+        next(error);
     }
 };
 

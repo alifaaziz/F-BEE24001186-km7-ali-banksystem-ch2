@@ -41,7 +41,7 @@ describe('Auth Controller', () => {
             },
         };
 
-        prisma.user.findUnique.mockResolvedValue(null); // User tidak ada
+        prisma.user.findUnique.mockResolvedValue(null);
         bcrypt.hash.mockResolvedValue('hashedPassword');
 
         const mockUser = {
@@ -70,6 +70,24 @@ describe('Auth Controller', () => {
         expect(JSON.parse(res._getData())).toEqual(mockUser);
     });
 
+    test('should return 400 if error occurs during validation in register', async () => {
+        req.body = {
+            name: '', // Nama kosong untuk memicu error validasi
+            email: 'john.doe@example.com',
+            password: 'password123',
+            profile: {
+                identityType: 'KTP',
+                identityNumber: '1234567890123456',
+                address: 'Jl. Contoh No. 1',
+            },
+        };
+    
+        await authController.register(req, res, next);
+    
+        expect(res.statusCode).toBe(400);
+        expect(JSON.parse(res._getData())).toEqual({ message: '"name" is not allowed to be empty' });
+    });    
+
     test('should return 400 if email is already registered', async () => {
         req.body = {
             name: 'John Doe',
@@ -82,7 +100,7 @@ describe('Auth Controller', () => {
             },
         };
 
-        prisma.user.findUnique.mockResolvedValue({ id: 1 }); // User ditemukan
+        prisma.user.findUnique.mockResolvedValue({ id: 1 });
 
         await authController.register(req, res, next);
 
@@ -123,7 +141,7 @@ describe('Auth Controller', () => {
             password: 'hashedPassword',
         };
         prisma.user.findUnique.mockResolvedValue(mockUser);
-        bcrypt.compare.mockResolvedValue(false); // Password tidak cocok
+        bcrypt.compare.mockResolvedValue(false);
 
         await authController.login(req, res, next);
 
@@ -149,13 +167,56 @@ describe('Auth Controller', () => {
     });
 
     test('should return 404 if user not found in whoAmI', async () => {
-        req.user = { userId: 999 }; // ID tidak ada
+        req.user = { userId: 999 };
 
-        prisma.user.findUnique.mockResolvedValue(null); // User tidak ditemukan
+        prisma.user.findUnique.mockResolvedValue(null);
 
         await authController.whoAmI(req, res, next);
 
         expect(res.statusCode).toBe(404);
         expect(JSON.parse(res._getData())).toEqual({ message: 'User not found' });
+    });
+
+    // Error handling tests for register, login, and whoAmI
+    test('should handle errors during register', async () => {
+        prisma.user.findUnique.mockRejectedValue(new Error('Database error'));
+
+        req.body = {
+            name: 'John Doe',
+            email: 'john.doe@example.com',
+            password: 'password123',
+            profile: {
+                identityType: 'KTP',
+                identityNumber: '1234567890123456',
+                address: 'Jl. Contoh No. 1',
+            },
+        };
+
+        await authController.register(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    test('should handle errors during login', async () => {
+        prisma.user.findUnique.mockRejectedValue(new Error('Database error'));
+
+        req.body = {
+            email: 'john.doe@example.com',
+            password: 'password123',
+        };
+
+        await authController.login(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    test('should handle errors during whoAmI', async () => {
+        prisma.user.findUnique.mockRejectedValue(new Error('Database error'));
+
+        req.user = { userId: 1 };
+
+        await authController.whoAmI(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(expect.any(Error));
     });
 });
