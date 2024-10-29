@@ -1,0 +1,1011 @@
+{
+    "info": {
+      "description": "API documentation for the Basic Banking System",
+      "title": "Basic Banking System API",
+      "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api/v1",
+    "produces": [
+      "application/json"
+    ],
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "securityDefinitions": {
+      "JWT": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": ""
+      }
+    },
+    "swagger": "2.0",
+    "paths": {
+      "/accounts": {
+        "post": {
+          "parameters": [
+            {
+              "name": "account",
+              "in": "body",
+              "description": "Account object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "account",
+              "in": "body",
+              "description": "ID of the user owning the account",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "account",
+              "in": "body",
+              "description": "Name of the bank",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "account",
+              "in": "body",
+              "description": "Bank account number",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created account"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        },
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "An array of bank accounts",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/accounts/{accountId}": {
+        "get": {
+          "parameters": [
+            {
+              "name": "accountId",
+              "in": "path",
+              "description": "ID of the account to fetch",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "Account details"
+            },
+            "404": {
+              "description": "Account not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/accounts/deposit": {
+        "post": {
+          "parameters": [
+            {
+              "name": "deposit",
+              "in": "body",
+              "description": "Deposit object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "deposit",
+              "in": "body",
+              "description": "ID of the account to deposit into",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "deposit",
+              "in": "body",
+              "description": "Amount to deposit",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated account with new balance"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/accounts/withdraw": {
+        "post": {
+          "parameters": [
+            {
+              "name": "withdraw",
+              "in": "body",
+              "description": "Withdraw object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "withdraw",
+              "in": "body",
+              "description": "ID of the account to withdraw from",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "withdraw",
+              "in": "body",
+              "description": "Amount to withdraw",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated account with new balance"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/auth/register": {
+        "post": {
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User registration object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Name of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Email of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Password of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User profile details",
+              "required": false,
+              "type": "object"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Identity type (e.g., ID card)",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Identity number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User address",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Auth"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created user object"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User login object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Email of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Password of the user",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Auth"
+          ],
+          "responses": {
+            "200": {
+              "description": "JWT token for authenticated user"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/auth/whoami": {
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Auth"
+          ],
+          "responses": {
+            "200": {
+              "description": "Authenticated user details"
+            },
+            "404": {
+              "description": "User not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/transactions": {
+        "post": {
+          "parameters": [
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "Transaction object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "ID of the source account",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "ID of the destination account",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "Amount to transfer",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Transactions"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created transaction"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        },
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Transactions"
+          ],
+          "responses": {
+            "200": {
+              "description": "An array of transactions",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/transactions/{transactionId}": {
+        "get": {
+          "parameters": [
+            {
+              "name": "transactionId",
+              "in": "path",
+              "description": "ID of the transaction to fetch",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Transactions"
+          ],
+          "responses": {
+            "200": {
+              "description": "Transaction details"
+            },
+            "404": {
+              "description": "Transaction not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/users": {
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Users"
+          ],
+          "responses": {
+            "200": {
+              "description": "An array of users",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/users/{userId}": {
+        "get": {
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "description": "ID of the user to fetch",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Users"
+          ],
+          "responses": {
+            "200": {
+              "description": "User details"
+            },
+            "404": {
+              "description": "User not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+  
+    },
+    "responses": {
+  
+    },
+    "parameters": {
+  
+    },
+    "tags": [
+      {
+        "name": "Accounts",
+        "description": "Operations about bank accounts"
+      },
+      {
+        "name": "Auth",
+        "description": "Operations about user authentication"
+      },
+      {
+        "name": "Transactions",
+        "description": "Operations about transactions"
+      },
+      {
+        "name": "Users",
+        "description": "Operations about users"
+      }
+    ]
+  }{
+    "info": {
+      "description": "API documentation for the Basic Banking System",
+      "title": "Basic Banking System API",
+      "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api/v1",
+    "produces": [
+      "application/json"
+    ],
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "securityDefinitions": {
+      "JWT": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": ""
+      }
+    },
+    "swagger": "2.0",
+    "paths": {
+      "/accounts": {
+        "post": {
+          "parameters": [
+            {
+              "name": "account",
+              "in": "body",
+              "description": "Account object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "account",
+              "in": "body",
+              "description": "ID of the user owning the account",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "account",
+              "in": "body",
+              "description": "Name of the bank",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "account",
+              "in": "body",
+              "description": "Bank account number",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created account"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        },
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "An array of bank accounts",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/accounts/{accountId}": {
+        "get": {
+          "parameters": [
+            {
+              "name": "accountId",
+              "in": "path",
+              "description": "ID of the account to fetch",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "Account details"
+            },
+            "404": {
+              "description": "Account not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/accounts/deposit": {
+        "post": {
+          "parameters": [
+            {
+              "name": "deposit",
+              "in": "body",
+              "description": "Deposit object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "deposit",
+              "in": "body",
+              "description": "ID of the account to deposit into",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "deposit",
+              "in": "body",
+              "description": "Amount to deposit",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated account with new balance"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/accounts/withdraw": {
+        "post": {
+          "parameters": [
+            {
+              "name": "withdraw",
+              "in": "body",
+              "description": "Withdraw object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "withdraw",
+              "in": "body",
+              "description": "ID of the account to withdraw from",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "withdraw",
+              "in": "body",
+              "description": "Amount to withdraw",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Accounts"
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated account with new balance"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/auth/register": {
+        "post": {
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User registration object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Name of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Email of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Password of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User profile details",
+              "required": false,
+              "type": "object"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Identity type (e.g., ID card)",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Identity number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User address",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Auth"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created user object"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User login object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Email of the user",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Password of the user",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Auth"
+          ],
+          "responses": {
+            "200": {
+              "description": "JWT token for authenticated user"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/auth/whoami": {
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Auth"
+          ],
+          "responses": {
+            "200": {
+              "description": "Authenticated user details"
+            },
+            "404": {
+              "description": "User not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/transactions": {
+        "post": {
+          "parameters": [
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "Transaction object",
+              "required": true,
+              "type": "object"
+            },
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "ID of the source account",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "ID of the destination account",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "transaction",
+              "in": "body",
+              "description": "Amount to transfer",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Transactions"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created transaction"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        },
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Transactions"
+          ],
+          "responses": {
+            "200": {
+              "description": "An array of transactions",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/transactions/{transactionId}": {
+        "get": {
+          "parameters": [
+            {
+              "name": "transactionId",
+              "in": "path",
+              "description": "ID of the transaction to fetch",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Transactions"
+          ],
+          "responses": {
+            "200": {
+              "description": "Transaction details"
+            },
+            "404": {
+              "description": "Transaction not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/users": {
+        "get": {
+          "parameters": [],
+          "description": "",
+          "tags": [
+            "Users"
+          ],
+          "responses": {
+            "200": {
+              "description": "An array of users",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      },
+      "/users/{userId}": {
+        "get": {
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "description": "ID of the user to fetch",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "",
+          "tags": [
+            "Users"
+          ],
+          "responses": {
+            "200": {
+              "description": "User details"
+            },
+            "404": {
+              "description": "User not found"
+            },
+            "default": {
+              "description": "Unexpected error"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+  
+    },
+    "responses": {
+  
+    },
+    "parameters": {
+  
+    },
+    "tags": [
+      {
+        "name": "Accounts",
+        "description": "Operations about bank accounts"
+      },
+      {
+        "name": "Auth",
+        "description": "Operations about user authentication"
+      },
+      {
+        "name": "Transactions",
+        "description": "Operations about transactions"
+      },
+      {
+        "name": "Users",
+        "description": "Operations about users"
+      }
+    ]
+  }
