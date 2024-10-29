@@ -1,10 +1,9 @@
-const express = require('express');
-const router = express.Router();
+// src/controllers/accountController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Create Account
-router.post('/', async (req, res, next) => {
+const createAccount = async (req, res, next) => {
     try {
         const { userId, bankName, bankAccountNumber } = req.body;
 
@@ -21,20 +20,20 @@ router.post('/', async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 
 // Get All Accounts
-router.get('/', async (req, res, next) => {
+const getAllAccounts = async (req, res, next) => {
     try {
         const accounts = await prisma.bankAccount.findMany();
         res.json(accounts);
     } catch (err) {
         next(err);
     }
-});
+};
 
 // Get Account by ID
-router.get('/:accountId', async (req, res, next) => {
+const getAccountById = async (req, res, next) => {
     try {
         const account = await prisma.bankAccount.findUnique({
             where: { id: parseInt(req.params.accountId) }
@@ -46,10 +45,10 @@ router.get('/:accountId', async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 
 // Deposit
-router.post('/deposit', async (req, res, next) => {
+const deposit = async (req, res, next) => {
     try {
         const { accountId, amount } = req.body;
 
@@ -79,27 +78,43 @@ router.post('/deposit', async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
-
+};
 
 // Withdraw
-router.post('/withdraw', async (req, res, next) => {
+const withdraw = async (req, res, next) => {
     try {
         const { accountId, amount } = req.body;
 
-        const account = await prisma.bankAccount.update({
+        const account = await prisma.bankAccount.findUnique({
             where: { id: accountId },
-            data: {
-                balance: {
-                    decrement: amount
-                }
-            }
         });
 
-        res.json(account);
+        if (!account) {
+            return res.status(404).json({ message: 'Account not found' });
+        }
+
+        if (account.balance < amount) {
+            return res.status(400).json({ message: 'Insufficient balance' });
+        }
+
+        // Update saldo
+        const updatedAccount = await prisma.bankAccount.update({
+            where: { id: accountId },
+            data: {
+                balance: account.balance - amount,
+            },
+        });
+
+        res.json(updatedAccount);
     } catch (err) {
         next(err);
     }
-});
+};
 
-module.exports = router;
+module.exports = {
+    createAccount,
+    getAllAccounts,
+    getAccountById,
+    deposit,
+    withdraw,
+};

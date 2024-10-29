@@ -1,10 +1,9 @@
-const express = require('express');
-const router = express.Router();
+// src/controllers/transactionController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// POST /api/v1/transactions
-router.post('/', async (req, res, next) => {
+// Create Transaction
+const createTransaction = async (req, res, next) => {
     try {
         const { sourceAccountId, destinationAccountId, amount } = req.body;
 
@@ -55,10 +54,10 @@ router.post('/', async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 
-// GET /api/v1/transactions: List all transactions
-router.get('/', async (req, res, next) => {
+// Get All Transactions
+const getAllTransactions = async (req, res, next) => {
     try {
         const transactions = await prisma.transaction.findMany({
             include: {
@@ -74,10 +73,10 @@ router.get('/', async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 
-// GET /api/v1/transactions/:transactionId: Display transaction details
-router.get('/:transactionId', async (req, res, next) => {
+// Get Transaction by ID
+const getTransactionById = async (req, res, next) => {
     try {
         const transaction = await prisma.transaction.findUnique({
             where: { id: parseInt(req.params.transactionId) },
@@ -99,6 +98,10 @@ router.get('/:transactionId', async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 
-module.exports = router;
+module.exports = {
+    createTransaction,
+    getAllTransactions,
+    getTransactionById,
+};
