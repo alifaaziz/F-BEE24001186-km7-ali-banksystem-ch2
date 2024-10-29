@@ -62,10 +62,10 @@ const getAllTransactions = async (req, res, next) => {
         const transactions = await prisma.transaction.findMany({
             include: {
                 sourceAccount: {
-                    select: { id: true, bankAccountNumber: true } // Include only necessary fields
+                    select: { id: true, bankAccountNumber: true }
                 },
                 destinationAccount: {
-                    select: { id: true, bankAccountNumber: true } // Include only necessary fields
+                    select: { id: true, bankAccountNumber: true }
                 },
             },
         });

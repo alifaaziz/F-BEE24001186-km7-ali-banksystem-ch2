@@ -49,7 +49,7 @@ describe('Transaction Controller', () => {
 
         await transactionController.createTransaction(req, res, next);
 
-        expect(prisma.bankAccount.update).toHaveBeenCalledTimes(2); // Update kedua akun
+        expect(prisma.bankAccount.update).toHaveBeenCalledTimes(2);
         expect(res.statusCode).toBe(201);
         expect(JSON.parse(res._getData())).toEqual(mockTransaction);
     });
@@ -66,7 +66,7 @@ describe('Transaction Controller', () => {
         req.body = {
             sourceAccountId: 1,
             destinationAccountId: 2,
-            amount: 200, // Jumlah lebih dari saldo
+            amount: 200,
         };
 
         await transactionController.createTransaction(req, res, next);
@@ -75,11 +75,26 @@ describe('Transaction Controller', () => {
         expect(JSON.parse(res._getData())).toEqual({ message: 'Insufficient balance in source account' });
     });
 
+    test('should return 400 for invalid source account ID, destination account ID, or amount', async () => {
+        req.body = {
+            sourceAccountId: 1,
+            destinationAccountId: 2,
+            amount: -100,
+        };
+
+        await transactionController.createTransaction(req, res, next);
+
+        expect(res.statusCode).toBe(400);
+        expect(JSON.parse(res._getData())).toEqual({
+            message: 'Invalid source account ID, destination account ID, or amount',
+        });
+    });
+
     test('should return 404 if source or destination account not found', async () => {
-        prisma.bankAccount.findUnique.mockResolvedValueOnce(null); // Sumber akun tidak ditemukan
+        prisma.bankAccount.findUnique.mockResolvedValueOnce(null);
 
         req.body = {
-            sourceAccountId: 999, // ID yang tidak ada
+            sourceAccountId: 999,
             destinationAccountId: 2,
             amount: 200,
         };
@@ -88,6 +103,22 @@ describe('Transaction Controller', () => {
 
         expect(res.statusCode).toBe(404);
         expect(JSON.parse(res._getData())).toEqual({ message: 'Source or destination account not found' });
+    });
+
+    test('should call next with an error if database fails on create transaction', async () => {
+        const mockError = new Error('Database error');
+        prisma.bankAccount.findUnique.mockRejectedValue(mockError);
+
+        req.body = {
+            sourceAccountId: 1,
+            destinationAccountId: 2,
+            amount: 200,
+        };
+
+        await transactionController.createTransaction(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(mockError);
+        expect(res.statusCode).toBe(200);
     });
 
     test('should get all transactions', async () => {
@@ -103,6 +134,16 @@ describe('Transaction Controller', () => {
         expect(res.statusCode).toBe(200);
     });
 
+    test('should call next with an error if database fails on get all transactions', async () => {
+        const mockError = new Error('Database error');
+        prisma.transaction.findMany.mockRejectedValue(mockError);
+
+        await transactionController.getAllTransactions(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(mockError);
+        expect(res.statusCode).toBe(200);
+    });
+
     test('should get transaction by ID', async () => {
         const mockTransaction = { id: 1, sourceAccountId: 1, destinationAccountId: 2, amount: 200 };
         prisma.transaction.findUnique.mockResolvedValue(mockTransaction);
@@ -115,12 +156,23 @@ describe('Transaction Controller', () => {
     });
 
     test('should return 404 if transaction not found', async () => {
-        prisma.transaction.findUnique.mockResolvedValue(null); // Transaksi tidak ditemukan
+        prisma.transaction.findUnique.mockResolvedValue(null);
 
-        req.params = { transactionId: 999 }; // ID yang tidak ada
+        req.params = { transactionId: 999 };
         await transactionController.getTransactionById(req, res, next);
 
         expect(res.statusCode).toBe(404);
         expect(JSON.parse(res._getData())).toEqual({ message: 'Transaction not found' });
+    });
+
+    test('should call next with an error if database fails on get transaction by ID', async () => {
+        const mockError = new Error('Database error');
+        prisma.transaction.findUnique.mockRejectedValue(mockError);
+
+        req.params = { transactionId: 1 };
+        await transactionController.getTransactionById(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(mockError);
+        expect(res.statusCode).toBe(200);
     });
 });
