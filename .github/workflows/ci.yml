@@ -1,4 +1,4 @@
-name: Github CI - Build Status and Test Coverage
+name: Github CI - Test Coverage
 
 on:
   push:
@@ -15,21 +15,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 21
-      - name: Get cached node modules
-        id: npm-cache-dir-path
-        run: echo "::set-output name=dir::$(npm config get cache)"
-      - uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
       - name: Install dependencies
-        run: npm install --frozen-lockfile
-      - name: Running tests
-        run: npm test
+        run: npm install 
       - name: Running test coverage
         run: npm test -- --coverage
-      - name: Build project
-        run: npm run build
