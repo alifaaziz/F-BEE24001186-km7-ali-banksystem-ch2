@@ -1,21 +1,26 @@
-name: Github CI - Test Coverage
+name: Test
 
 on:
-  push:
-    branches: ['main', 'deployment']
-  pull_request:
-    branches: ['release/*']
+  workflow_run:
+    workflows: ["Lint"]  # Mengacu pada nama workflow linting
+    types:
+      - completed
 
 jobs:
-  build:
+  test:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Hanya jika linting sukses
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node.js 21.x
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: '21'
+
       - name: Install dependencies
         run: npm install 
-      - name: Running test coverage
+
+      - name: Run tests with coverage
         run: npm test -- --coverage

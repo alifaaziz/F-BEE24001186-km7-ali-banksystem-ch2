@@ -1,4 +1,4 @@
-name: CI - Lint
+name: Lint
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
         run: npm install 
 
       - name: Run ESLint
-        run: npx eslint . --fix
+        run: npx eslint .
