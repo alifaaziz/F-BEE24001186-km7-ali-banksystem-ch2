@@ -1,38 +1,35 @@
-name: CI - Build and Test
+name: Github CI - Build Status and Test Coverage
 
 on:
   push:
-    branches: ['main','development']
+    branches: ['main', 'development']
   pull_request:
     branches: ['release/*']
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node.js
+      - name: Set up Node.js 21.x
         uses: actions/setup-node@v4
         with:
-          node-version: '21'
-
-      - name: Cache npm modules
-        uses: actions/cache@v4
+          node-version: 21
+      - name: Get cached node modules
+        id: npm-cache-dir-path
+        run: echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v4
+        id: npm-cache
         with:
-          path: ~/.npm
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-npm-
-
       - name: Install dependencies
-        run: npm install
-
-      - name: Run Prisma Migrate
-        run: npx prisma migrate deploy 
-
-      - name: Run tests
+        run: npm install --frozen-lockfile
+      - name: Running tests
         run: npm test
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Running test coverage
+        run: npm test -- --coverage
+      - name: Build project
+        run: npm run build
