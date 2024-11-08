@@ -1,0 +1,43 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main, deployment]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '21'  # Menggunakan Node.js versi 21
+
+    - name: Cache npm dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests with coverage
+      run: npm test -- --coverage  # Menjalankan Jest dengan cakupan
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}  # Ambil token dari secret
+        files: ./coverage/lcov.info           # Lokasi file cakupan Jest
+        flags: unittests                      # Optional: flag untuk laporan
+        name: Codecov-umbrella
+        fail_ci_if_error: true
