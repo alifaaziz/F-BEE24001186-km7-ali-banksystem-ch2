@@ -36,6 +36,9 @@ CREATE TABLE "profiles" (
     "identityType" TEXT NOT NULL,
     "identityNumber" TEXT NOT NULL,
     "address" TEXT NOT NULL,
+    "imageTitle" TEXT,
+    "imageDescription" TEXT,
+    "imageUrl" TEXT,
 
     CONSTRAINT "profiles_pkey" PRIMARY KEY ("id")
 );

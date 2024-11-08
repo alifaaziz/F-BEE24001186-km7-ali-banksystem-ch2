@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 // const { PrismaClient } = require('@prisma/client');
+// const prisma = new PrismaClient();
 // const swaggerUi = require('swagger-ui-express');
 const expressSwagger = require('express-swagger-generator');
 
@@ -10,9 +11,9 @@ const userRoutes = require('./routes/user');
 const accountRoutes = require('./routes/accounts');
 const transactionRoutes = require('./routes/transactions');
 const authRoutes = require('./routes/authRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 
 const app = express();
-// const prisma = new PrismaClient();
 
 // Swagger Setup
 const swaggerOptions = {
@@ -57,9 +58,11 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/accounts', accountRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/image', imageRoutes);
+
 
 // Error Handling Middleware
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
     console.error(err.stack);
     if (err.isJoi) {
         return res.status(400).json({
@@ -69,6 +72,8 @@ app.use((err, req, res) => {
     res.status(500).json({
         message: 'Internal server error',
     });
+    next();
 });
+
 
 module.exports = app;
