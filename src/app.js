@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
-const { PrismaClient } = require('@prisma/client');
-const swaggerUi = require('swagger-ui-express');
+// const { PrismaClient } = require('@prisma/client');
+// const swaggerUi = require('swagger-ui-express');
 const expressSwagger = require('express-swagger-generator');
 
 // Routes
@@ -12,7 +12,7 @@ const transactionRoutes = require('./routes/transactions');
 const authRoutes = require('./routes/authRoutes');
 
 const app = express();
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 // Swagger Setup
 const swaggerOptions = {
@@ -59,7 +59,7 @@ app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/auth', authRoutes);
 
 // Error Handling Middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     console.error(err.stack);
     if (err.isJoi) {
         return res.status(400).json({
