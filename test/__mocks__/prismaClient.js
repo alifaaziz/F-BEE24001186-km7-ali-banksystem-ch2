@@ -1,3 +1,5 @@
+const { uploadImage } = require("../../src/controllers/imageController");
+
 // test/__mocks__/prismaClient.js
 const mockUser = {
     id: 1,
@@ -18,6 +20,7 @@ const prisma = {
         create: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+        upload: jest.fn(),
     },
 };
 
