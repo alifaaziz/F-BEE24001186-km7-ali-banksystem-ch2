@@ -12,12 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-    
+
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.EC2_KEY }}
-      
 
       - name: Add EC2 host to known hosts
         run: |
@@ -28,21 +27,29 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << EOF
 
-          git init
+          # Hapus folder proyek lama jika ada
+          if [ -d "F-BEE24001186-km7-ali-banksystem-ch2" ]; then
+            rm -rf F-BEE24001186-km7-ali-banksystem-ch2
+          fi
 
+          # Kloning ulang repositori
           git clone https://github.com/alifaaziz/F-BEE24001186-km7-ali-banksystem-ch2.git
-          
-          cd /F-BEE24001186-km7-ali-banksystem-ch2
 
+          cd F-BEE24001186-km7-ali-banksystem-ch2
+
+          # Tarik pembaruan terbaru dari cabang utama
           git pull origin main
 
+          # Install dependencies
           npm install                
 
+          # Generate Prisma
           npx prisma generate 
 
+          # Restart atau start PM2 process
           pm2 restart "Bank System Binar" || pm2 start index.js --name "Bank System Binar" 
           
+          # Simpan konfigurasi PM2 dan setup startup
           pm2 save              
-
           pm2 startup 
           EOF
