@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'  # Menggunakan Node.js versi 21
+        node-version: '18.x' 
 
     - name: Cache npm dependencies
       uses: actions/cache@v3
@@ -31,12 +31,12 @@ jobs:
       run: npm install
 
     - name: Run tests with coverage
-      run: npm test -- --coverage  # Menjalankan Jest dengan cakupan
+      run: npm test -- --coverage  
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage/lcov.info   
+        files: ./coverage/lcov.info
         name: Codecov-umbrella
         fail_ci_if_error: true

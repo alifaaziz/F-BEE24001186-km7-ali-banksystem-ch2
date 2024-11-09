@@ -27,11 +27,10 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
 
-          # Sesuaikan dengan direktori proyek dan URL repositori Anda
           PROJECT_DIR="F-BEE24001186-km7-ali-banksystem-ch2"
           REPO_URL="https://github.com/alifaaziz/F-BEE24001186-km7-ali-banksystem-ch2.git"
 
-          # Hapus folder proyek lama jika ada
+          # Hapus folder proyek lama jika ada (pastikan hanya folder terkait yang dihapus)
           if [ -d "$PROJECT_DIR" ]; then
             rm -rf "$PROJECT_DIR"
           fi
@@ -56,4 +55,5 @@ jobs:
           # Simpan konfigurasi PM2 dan setup startup
           pm2 save              
           pm2 startup -u ubuntu --hp /home/ubuntu 
+
           EOF
