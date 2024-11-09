@@ -27,17 +27,19 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << EOF
-          cd /F-BEE24001186-km7-ali-banksystem-ch2
-
+          if [ -d "/home/ubuntu/F-BEE24001186-km7-ali-banksystem-ch2" ]; then
+          cd /home/ubuntu/F-BEE24001186-km7-ali-banksystem-ch2
           git pull origin main
-
-          npm install                
-
-          npx prisma generate 
-
-          pm2 restart "Bank System Binar" || pm2 start index.js --name "Bank System Binar" 
+          else
+          echo "Folder tidak ada, melakukan git clone"
+          git clone https://github.com/alifaaziz/F-BEE24001186-km7-ali-banksystem-ch2.git /home/ubuntu/F-BEE24001186-km7-ali-banksystem-ch2
+          cd /home/ubuntu/F-BEE24001186-km7-ali-banksystem-ch2
+          fi
           
-          pm2 save              
-
-          pm2 startup 
+          npm install
+          npx prisma generate
+          pm2 restart "Bank System Binar" || pm2 start index.js --name "Bank System Binar"
+          pm2 save
+          pm2 startup
           EOF
+          echo "Folder sudah ada, melanjutkan git pull"
