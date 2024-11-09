@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main, deployment]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -36,8 +36,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}  # Ambil token dari secret
-        files: ./coverage/lcov.info           # Lokasi file cakupan Jest
-        flags: unittests                      # Optional: flag untuk laporan
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage/lcov.info   
         name: Codecov-umbrella
         fail_ci_if_error: true
