@@ -2,9 +2,8 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
@@ -12,26 +11,33 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        node-version: '18.x' 
-
-    - name: Cache npm dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+        node-version: '18.x'  # Update Node version to 18.x or higher
 
     - name: Install dependencies
-      run: npm install
+      run: |
+        npm install
 
-    - name: Run tests with coverage
-      run: npm test -- --coverage  
+    - name: Run npm audit
+      run: |
+        npm audit fix --force
+
+    - name: Generate Prisma Client
+      run: |
+        npx prisma generate
+
+    - name: Run tests
+      run: |
+        npm test -- --coverage
+
+    - name: Build and deploy
+      run: |
+        npm run build
+        # Add your deployment steps here
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
