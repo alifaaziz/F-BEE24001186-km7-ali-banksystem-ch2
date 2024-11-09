@@ -25,31 +25,35 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << EOF
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+
+          # Sesuaikan dengan direktori proyek dan URL repositori Anda
+          PROJECT_DIR="F-BEE24001186-km7-ali-banksystem-ch2"
+          REPO_URL="https://github.com/alifaaziz/F-BEE24001186-km7-ali-banksystem-ch2.git"
 
           # Hapus folder proyek lama jika ada
-          if [ -d "F-BEE24001186-km7-ali-banksystem-ch2" ]; then
-            rm -rf F-BEE24001186-km7-ali-banksystem-ch2
+          if [ -d "$PROJECT_DIR" ]; then
+            rm -rf "$PROJECT_DIR"
           fi
 
           # Kloning ulang repositori
-          git clone https://github.com/alifaaziz/F-BEE24001186-km7-ali-banksystem-ch2.git
+          git clone $REPO_URL "$PROJECT_DIR"
+          cd "$PROJECT_DIR"
 
-          cd F-BEE24001186-km7-ali-banksystem-ch2
-
-          # Tarik pembaruan terbaru dari cabang utama
+          # Pastikan berada di cabang main dan tarik pembaruan terbaru
+          git checkout main
           git pull origin main
 
           # Install dependencies
           npm install                
 
-          # Generate Prisma
+          # Generate Prisma client
           npx prisma generate 
 
           # Restart atau start PM2 process
-          pm2 restart "Bank System Binar" || pm2 start index.js --name "Bank System Binar" 
+          pm2 restart "Bank System Binar" || pm2 start index.js --name "Bank System Binar"
           
           # Simpan konfigurasi PM2 dan setup startup
           pm2 save              
-          pm2 startup 
+          pm2 startup -u ubuntu --hp /home/ubuntu 
           EOF

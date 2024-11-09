@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '21'  # Menggunakan Node.js versi 21
+        node-version: '18'  # Menggunakan Node.js versi 21
 
     - name: Cache npm dependencies
       uses: actions/cache@v3
