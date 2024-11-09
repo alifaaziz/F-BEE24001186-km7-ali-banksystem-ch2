@@ -28,6 +28,10 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << EOF
 
+          git init
+
+          git clone https://github.com/alifaaziz/F-BEE24001186-km7-ali-banksystem-ch2.git
+          
           cd /F-BEE24001186-km7-ali-banksystem-ch2
 
           git pull origin main
