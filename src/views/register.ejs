@@ -1,0 +1,10 @@
+<h2>Register</h2>
+<form action="/register" method="post">
+    <% if(message.error){ %>
+    <span style="color:red"> <%= message.error %></span>
+    <% } %>
+
+    <div>
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" reuired>
+    </div>
