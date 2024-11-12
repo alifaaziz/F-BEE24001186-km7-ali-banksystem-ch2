@@ -50,7 +50,7 @@ app.use(morgan('dev'));
 
 // Routes
 app.get('/', (req, res) => {
-    res.send('Welcome to the Basic Banking System API');
+    res.send(`Welcome to the Basic Banking System API (API documentation: /api-docs)`);
 });
 
 // Menggunakan route yang telah dibuat
