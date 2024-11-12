@@ -36,11 +36,21 @@ CREATE TABLE "profiles" (
     "identityType" TEXT NOT NULL,
     "identityNumber" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "imageTitle" TEXT,
-    "imageDescription" TEXT,
-    "imageUrl" TEXT,
 
     CONSTRAINT "profiles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "images" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "images_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -51,6 +61,9 @@ CREATE UNIQUE INDEX "bankaccounts_bankAccountNumber_key" ON "bankaccounts"("bank
 
 -- CreateIndex
 CREATE UNIQUE INDEX "profiles_userId_key" ON "profiles"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "images_userId_key" ON "images"("userId");
 
 -- AddForeignKey
 ALTER TABLE "bankaccounts" ADD CONSTRAINT "bankaccounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -63,3 +76,6 @@ ALTER TABLE "transactions" ADD CONSTRAINT "transactions_destinationAccountId_fke
 
 -- AddForeignKey
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "images" ADD CONSTRAINT "images_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
