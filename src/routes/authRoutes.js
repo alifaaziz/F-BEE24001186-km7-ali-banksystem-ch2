@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, whoAmI } = require('../controllers/authController');
+const { register, login, whoAmI, verifyOtp } = require('../controllers/authController');
 const restrict = require('../middlewares/restrict');
 
 /**
@@ -56,5 +56,6 @@ router.post('/login', login);
  * @returns {Error}  default - Unexpected error
  */
 router.get('/whoami', restrict, whoAmI);
+router.post('/verify-otp', verifyOtp);
 
 module.exports = router;

@@ -1,9 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
-// const swaggerUi = require('swagger-ui-express');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
 const expressSwagger = require('express-swagger-generator');
 
 // Routes
@@ -12,8 +12,11 @@ const accountRoutes = require('./routes/accounts');
 const transactionRoutes = require('./routes/transactions');
 const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
+const notificationRoutes = require('./routes/notificationRoutes'); // Import route untuk notifikasi
 
 const app = express();
+const server = createServer(app); // Membuat server HTTP dari Express app
+const io = new Server(server);    // Menghubungkan Socket.IO ke server
 
 // Swagger Setup
 const swaggerOptions = {
@@ -48,10 +51,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
+// Setup EJS view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Socket.IO setup
+io.on('connection', (socket) => {
+    console.log('A user connected:', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected:', socket.id);
+    });
+});
+
 // Routes
 app.get('/', (req, res) => {
     res.send(`Welcome to the Basic Banking System API (API documentation: /api-docs)`);
 });
+
+// Menambahkan routes untuk notifikasi
+app.use('/api/v1/notifications', notificationRoutes);  // Gunakan route notifikasi
 
 // Menggunakan route yang telah dibuat
 app.use('/api/v1/users', userRoutes);
@@ -59,7 +78,6 @@ app.use('/api/v1/accounts', accountRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/image', imageRoutes);
-
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -75,5 +93,4 @@ app.use((err, req, res, next) => {
     next();
 });
 
-
-module.exports = app;
+module.exports = server;
