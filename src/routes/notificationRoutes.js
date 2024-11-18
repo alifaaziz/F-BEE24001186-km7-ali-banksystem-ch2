@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const { addNotification, getNotifications } = require('../controllers/notificationController');
+const restrict = require('../middlewares/restrict');
 
-// Import controller
-const notificationController = require('../controllers/notificationController');
 
 // Route untuk menampilkan notifikasi
-router.get('/', notificationController.getNotifications);
+router.get('/', getNotifications);
 
 // Route untuk menambahkan notifikasi setelah registrasi
-router.post('/add', notificationController.addNotification);
+router.post('/add', addNotification);
 
 module.exports = router;
