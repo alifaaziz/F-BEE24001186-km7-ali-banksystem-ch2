@@ -169,4 +169,124 @@ const whoAmI = async (req, res, next) => {
     }
 };
 
-module.exports = { register, login, whoAmI, verifyOtp };
+const forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        // Cek apakah email ada di database
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Email not found' });
+        }
+
+        // Generate token untuk reset password
+        const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+        const resetPasswordExpiresAt = new Date(Date.now() + 30 * 60 * 1000); // Token berlaku 30 menit
+
+        // Simpan token dan waktu kedaluwarsa ke database
+        await prisma.user.update({
+            where: { email },
+            data: {
+                resetPasswordToken,
+                resetPasswordExpiresAt,
+            },
+        });
+
+        // Kirim email dengan link reset password
+        const resetUrl = `${process.env.MY_URL}/api/v1/auth/reset-password/${resetPasswordToken}`;
+        await sendResetPasswordEmail(user.email, user.name, resetUrl);
+
+        res.status(200).json({ message: 'Password reset email sent.' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const sendResetPasswordEmail = async (userEmail, userName, resetUrl) => {
+    try {
+        const htmlTemplate = fs.readFileSync(path.join(__dirname, '../views/emails/reset-password.html'), 'utf-8');
+
+        const htmlContent = htmlTemplate.replace('{{name}}', userName).replace('{{resetUrl}}', resetUrl);
+
+        const mailOptions = {
+            from: process.env.EMAIL_SENDER,
+            to: userEmail,
+            subject: 'Reset Your Password',
+            html: htmlContent,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log('Password reset email sent successfully');
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+        throw new Error('Error sending password reset email');
+    }
+};
+
+const resetPassword = async (req, res, next) => {
+    try {
+        const { token } = req.params;
+
+        // Menggunakan findFirst() untuk mencari berdasarkan resetPasswordToken
+        const user = await prisma.user.findFirst({
+            where: {
+                resetPasswordToken: token,
+            },
+        });
+
+        // Mengecek apakah user tidak ditemukan atau token sudah kadaluarsa
+        if (!user || new Date() > user.resetPasswordExpiredAt) {
+            return res.status(400).render('reset-password', { message: 'Token is invalid or expired' });
+        }
+
+        // Jika token valid, tampilkan halaman reset password
+        res.render('reset-password', {
+            token: user.resetPasswordToken,
+            email: user.email,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const resetPasswordAction = async (req, res, next) => {
+    try {
+        const { token, password } = req.body;
+
+        // Cari user berdasarkan token reset password
+        const user = await prisma.user.findUnique({
+            where: {
+                resetPasswordToken: token,  // Cari berdasarkan token saja
+            },
+        });
+
+        if (!user || new Date() > user.resetPasswordExpiresAt) {
+            return res.status(400).json({ message: 'Token is invalid or expired' });
+        }
+
+        // Hash password baru
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Perbarui password dan reset token di database
+        await prisma.user.update({
+            where: { resetPasswordToken: token },  // Update berdasarkan token
+            data: {
+                password: hashedPassword,
+                resetPasswordToken: null,  // Hapus token setelah reset
+                resetPasswordExpiresAt: null,  // Hapus waktu kedaluwarsa token
+            },
+        });
+
+        const notificationMessage = `Hello ${user.name}, Your password has been changed successfully!`;
+        await addNotification(user.id, notificationMessage);
+
+        res.status(200).json({ message: 'Password has been successfully reset' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = { register, login, whoAmI, verifyOtp, forgotPassword, resetPassword, resetPasswordAction };

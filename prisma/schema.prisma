@@ -22,7 +22,7 @@ model User {
   otp            String?       
   otpExpiresAt   DateTime?
   notifications Notification[]
-  resetPasswordToken String?   
+  resetPasswordToken String?   @unique
   resetPasswordExpiresAt DateTime? 
   
   @@map("users")
