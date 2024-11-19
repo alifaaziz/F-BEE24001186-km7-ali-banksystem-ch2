@@ -1,6 +1,7 @@
 // src/controllers/transactionController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const Sentry = require("@sentry/node");
 
 // Create Transaction
 const createTransaction = async (req, res, next) => {
@@ -52,6 +53,7 @@ const createTransaction = async (req, res, next) => {
 
         res.status(201).json(transaction);
     } catch (err) {
+        Sentry.captureException(err);
         next(err);
     }
 };
@@ -71,6 +73,7 @@ const getAllTransactions = async (req, res, next) => {
         });
         res.json(transactions);
     } catch (err) {
+        Sentry.captureException(err);
         next(err);
     }
 };
@@ -96,6 +99,7 @@ const getTransactionById = async (req, res, next) => {
 
         res.json(transaction);
     } catch (err) {
+        Sentry.captureException(err);
         next(err);
     }
 };

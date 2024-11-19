@@ -1,9 +1,20 @@
+// Inisialisasi Sentry sebelum mengimpor express
 require('dotenv').config();
+const Sentry = require('@sentry/node');
+
+// Inisialisasi Sentry dengan DSN yang benar dari file .env
+Sentry.init({ 
+    dsn: process.env.SENTRY_DSN, // Pastikan DSN diambil dari file .env
+    tracesSampleRate: 1.0, // Menentukan tingkat pengambilan trace untuk profiling
+    debug: true,  // Mengaktifkan debug mode untuk Sentry
+});
+
+// Import dependencies lainnya
 const express = require('express');
 const morgan = require('morgan');
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
-// const swaggerUi = require('swagger-ui-express');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
 const expressSwagger = require('express-swagger-generator');
 
 // Routes
@@ -12,8 +23,12 @@ const accountRoutes = require('./routes/accounts');
 const transactionRoutes = require('./routes/transactions');
 const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
+const notificationRoutes = require('./routes/notificationRoutes'); // Import route untuk notifikasi
 
+// Inisialisasi aplikasi Express
 const app = express();
+const server = createServer(app); // Membuat server HTTP dari Express app
+const io = new Server(server);    // Menghubungkan Socket.IO ke server
 
 // Swagger Setup
 const swaggerOptions = {
@@ -43,15 +58,31 @@ const swaggerOptions = {
 // Swagger generator
 expressSwagger(app)(swaggerOptions);
 
-// Middleware
+// Middleware untuk menangani body request
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
+
+// Setup EJS view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Socket.IO setup
+io.on('connection', (socket) => {
+    console.log('A user connected:', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected:', socket.id);
+    });
+});
 
 // Routes
 app.get('/', (req, res) => {
     res.send(`Welcome to the Basic Banking System API (API documentation: /api-docs)`);
 });
+
+// Menambahkan routes untuk notifikasi
+app.use('/api/v1/notifications', notificationRoutes);  // Gunakan route notifikasi
 
 // Menggunakan route yang telah dibuat
 app.use('/api/v1/users', userRoutes);
@@ -60,8 +91,20 @@ app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/image', imageRoutes);
 
+// Middleware error handler untuk Express
+Sentry.setupExpressErrorHandler(app);
 
-// Error Handling Middleware
+// Endpoint untuk memicu error ke Sentry
+app.get('/debug-sentry', (req, res) => {
+    try {
+      throw new Error("My first Sentry error!");
+    } catch (err) {
+      Sentry.captureException(err);  // Mengirim kesalahan ke Sentry
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+// Error Handling Middleware untuk Express
 app.use((err, req, res, next) => {
     console.error(err.stack);
     if (err.isJoi) {
@@ -75,5 +118,11 @@ app.use((err, req, res, next) => {
     next();
 });
 
+// Custom error handler untuk Sentry
+app.use(function onError(err, req, res, next) {
+    res.statusCode = 500;
+    res.end(res.sentry + "\n");
+});
 
-module.exports = app;
+// Menjalankan server
+module.exports = server;

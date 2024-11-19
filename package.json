@@ -4,9 +4,10 @@
   "description": "stupen binar",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "start": "node index.js",
-    "dev": "nodemon ./index.js"
+    "test": "jest && npm run sentry:sourcemaps",
+    "start": "node index.js && npm run sentry:sourcemaps",
+    "dev": "nodemon ./index.js",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org binar-challenge --project binar-challange ./out && sentry-cli sourcemaps upload --org binar-challenge --project binar-challange ./out"
   },
   "jest": {
     "collectCoverage": true,
@@ -29,9 +30,13 @@
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
+    "@sentry/cli": "^2.38.2",
+    "@sentry/node": "^8.38.0",
+    "@sentry/profiling-node": "^8.38.0",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-fileupload": "^1.5.1",
     "express-flash": "^0.0.2",
@@ -41,10 +46,12 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "prisma": "^5.21.1",
+    "socket.io": "^4.8.1",
     "swagger-generator-express": "^2.1.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"

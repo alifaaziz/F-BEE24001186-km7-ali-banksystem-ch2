@@ -1,6 +1,7 @@
 // src/controllers/accountController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const Sentry = require("@sentry/node");
 
 // Create Account
 const createAccount = async (req, res, next) => {
@@ -18,6 +19,7 @@ const createAccount = async (req, res, next) => {
 
         res.status(201).json(account);
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };
@@ -28,6 +30,7 @@ const getAllAccounts = async (req, res, next) => {
         const accounts = await prisma.bankAccount.findMany();
         res.json(accounts);
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };
@@ -43,6 +46,7 @@ const getAccountById = async (req, res, next) => {
         }
         res.json(account);
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };
@@ -72,6 +76,7 @@ const deposit = async (req, res, next) => {
 
         res.status(200).json(updatedAccount);
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };
@@ -105,6 +110,7 @@ const withdraw = async (req, res, next) => {
 
         res.status(200).json(updatedAccount);
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };
