@@ -1,6 +1,7 @@
 // src/controllers/userController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const Sentry = require("@sentry/node");
 
 // Menampilkan daftar pengguna
 const getUsers = async (req, res, next) => {
@@ -8,6 +9,7 @@ const getUsers = async (req, res, next) => {
         const users = await prisma.user.findMany();
         res.status(200).json(users);
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };
@@ -23,6 +25,7 @@ const getUserById = async (req, res, next) => {
         }
         res.status(200).json(user); // Gunakan .json() untuk mengembalikan objek
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 };

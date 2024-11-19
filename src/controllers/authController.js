@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const { addNotification } = require('./notificationController');
 const fs = require('fs');
 const path = require('path');
+const Sentry = require("@sentry/node");
 
 const registerSchema = Joi.object({
     name: Joi.string().required(),
@@ -47,6 +48,7 @@ const sendOtpEmail = async (userEmail, userName, otp) => {
     } catch (error) {
         console.error('Error sending OTP email:', error);
         throw new Error('Error sending OTP email');
+        Sentry.captureException(error);
     }
 };
 
@@ -89,8 +91,9 @@ const register = async (req, res, next) => {
         await sendOtpEmail(user.email, user.name, otp);
 
         res.status(201).json({ message: 'Registration successful. Please verify your OTP sent to your email.' });
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
 
@@ -131,8 +134,9 @@ const register = async (req, res, next) => {
           message: 'OTP verified successfully. Registration completed.',
           token,
       });
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
   
@@ -146,8 +150,9 @@ const login = async (req, res, next) => {
 
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
         res.json({ token });
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
 
@@ -164,8 +169,9 @@ const whoAmI = async (req, res, next) => {
         }
 
         res.json(user);
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
 
@@ -200,8 +206,9 @@ const forgotPassword = async (req, res, next) => {
         await sendResetPasswordEmail(user.email, user.name, resetUrl);
 
         res.status(200).json({ message: 'Password reset email sent.' });
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
 
@@ -221,6 +228,7 @@ const sendResetPasswordEmail = async (userEmail, userName, resetUrl) => {
         await transporter.sendMail(mailOptions);
         console.log('Password reset email sent successfully');
     } catch (error) {
+        Sentry.captureException(error);
         console.error('Error sending password reset email:', error);
         throw new Error('Error sending password reset email');
     }
@@ -247,8 +255,9 @@ const resetPassword = async (req, res, next) => {
             token: user.resetPasswordToken,
             email: user.email,
         });
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
 
@@ -284,8 +293,9 @@ const resetPasswordAction = async (req, res, next) => {
         await addNotification(user.id, notificationMessage);
 
         res.status(200).json({ message: 'Password has been successfully reset' });
-    } catch (err) {
-        next(err);
+    } catch (error) {
+        Sentry.captureException(error);
+        next(error);
     }
 };
 

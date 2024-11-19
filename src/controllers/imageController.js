@@ -1,6 +1,7 @@
 const imageKit = require('../config/imageKitConfig');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const Sentry = require("@sentry/node");
 
 // Fungsi untuk upload image ke ImageKit
 const uploadImage = async (req, res) => {
@@ -33,6 +34,7 @@ const uploadImage = async (req, res) => {
     res.status(200).json({ message: "Image uploaded successfully", image: newImage });
 
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     res.status(500).json({ message: "Error uploading image to ImageKit" });
   }
@@ -49,6 +51,7 @@ const getImages = async (req, res) => {
 
     res.status(200).json({ images });
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     res.status(500).json({ message: "Error fetching images" });
   }
@@ -72,6 +75,7 @@ const getImageDetail = async (req, res) => {
 
     res.status(200).json({ image });
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     res.status(500).json({ message: "Error fetching image details" });
   }
@@ -96,6 +100,7 @@ const deleteImage = async (req, res) => {
 
     res.status(200).json({ message: "Image deleted successfully" });
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     res.status(500).json({ message: "Error deleting image" });
   }
@@ -126,6 +131,7 @@ const updateImage = async (req, res) => {
 
     res.status(200).json({ message: "Image updated successfully", updatedImage });
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     res.status(500).json({ message: "Error updating image" });
   }

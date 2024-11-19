@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const Sentry = require("@sentry/node");
 let notifications = [];
 
 const addNotification = async (userId, message) => {
@@ -13,6 +14,7 @@ const addNotification = async (userId, message) => {
       });
       return notification;
   } catch (error) {
+      Sentry.captureException(error);
       console.error('Error adding notification:', error);
       throw error;
   }
@@ -28,8 +30,9 @@ const addNotification = async (userId, message) => {
       });
 
       res.render('notifications', { notifications });
-      } catch (err) {
-      next(err);
+      } catch (error) {
+      Sentry.captureException(error);
+      next(error);
     }
   };
 

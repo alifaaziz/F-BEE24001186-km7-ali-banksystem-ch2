@@ -1,4 +1,15 @@
+// Inisialisasi Sentry sebelum mengimpor express
 require('dotenv').config();
+const Sentry = require('@sentry/node');
+
+// Inisialisasi Sentry dengan DSN yang benar dari file .env
+Sentry.init({ 
+    dsn: process.env.SENTRY_DSN, // Pastikan DSN diambil dari file .env
+    tracesSampleRate: 1.0, // Menentukan tingkat pengambilan trace untuk profiling
+    debug: true,  // Mengaktifkan debug mode untuk Sentry
+});
+
+// Import dependencies lainnya
 const express = require('express');
 const morgan = require('morgan');
 const { createServer } = require('http');
@@ -14,6 +25,7 @@ const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const notificationRoutes = require('./routes/notificationRoutes'); // Import route untuk notifikasi
 
+// Inisialisasi aplikasi Express
 const app = express();
 const server = createServer(app); // Membuat server HTTP dari Express app
 const io = new Server(server);    // Menghubungkan Socket.IO ke server
@@ -46,7 +58,7 @@ const swaggerOptions = {
 // Swagger generator
 expressSwagger(app)(swaggerOptions);
 
-// Middleware
+// Middleware untuk menangani body request
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
@@ -79,7 +91,20 @@ app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/image', imageRoutes);
 
-// Error Handling Middleware
+// Middleware error handler untuk Express
+Sentry.setupExpressErrorHandler(app);
+
+// Endpoint untuk memicu error ke Sentry
+app.get('/debug-sentry', (req, res) => {
+    try {
+      throw new Error("My first Sentry error!");
+    } catch (err) {
+      Sentry.captureException(err);  // Mengirim kesalahan ke Sentry
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+// Error Handling Middleware untuk Express
 app.use((err, req, res, next) => {
     console.error(err.stack);
     if (err.isJoi) {
@@ -93,4 +118,11 @@ app.use((err, req, res, next) => {
     next();
 });
 
+// Custom error handler untuk Sentry
+app.use(function onError(err, req, res, next) {
+    res.statusCode = 500;
+    res.end(res.sentry + "\n");
+});
+
+// Menjalankan server
 module.exports = server;

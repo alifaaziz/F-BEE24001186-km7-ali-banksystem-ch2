@@ -4,9 +4,10 @@
   "description": "stupen binar",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "start": "node index.js",
-    "dev": "nodemon ./index.js"
+    "test": "jest && npm run sentry:sourcemaps",
+    "start": "node index.js && npm run sentry:sourcemaps",
+    "dev": "nodemon ./index.js",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org binar-challenge --project binar-challange ./out && sentry-cli sourcemaps upload --org binar-challenge --project binar-challange ./out"
   },
   "jest": {
     "collectCoverage": true,
@@ -29,6 +30,9 @@
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
+    "@sentry/cli": "^2.38.2",
+    "@sentry/node": "^8.38.0",
+    "@sentry/profiling-node": "^8.38.0",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.5",
